@@ -30,7 +30,7 @@ class SYS_MANAGER:
 
         if(key == 'save_path'):
             os.system("mkdir -p {}".format(value))
-            self.logHandler = open(value + '/log.txt', 'w+')
+            self.logHandler = open(value + 'log.txt', 'w+')
 
 
     def Log_MetaData(self):
