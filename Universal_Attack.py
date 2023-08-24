@@ -33,6 +33,7 @@ import Utils as util
 import ObjectiveFunc
 import ZO_SVRG as svrg
 import ZO_SGD as sgd
+import ZO_SCGS as scgs
 from SysManager import SYS_MANAGER
 
 
@@ -53,6 +54,8 @@ def main():
         delImgAT = svrg.ZOSVRG(delImgAT_Init, MGR, objfunc)
     elif(MGR.parSet['optimizer'] == 'ZOSGD'):
         delImgAT = sgd.ZOSGD(delImgAT_Init, MGR, objfunc)
+    elif(MGR.parSet['optimizer'] == 'ZOSCGS'):
+        delImgAT = scgs.ZOSCGS(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['Mscgs'], MGR.parSet['M2scgs'], MGR.parSet['alpha'], MGR.parSet['D'], MGR.parSet['gamma'],  objfunc)
     else:
         print('Please specify a valid optimizer')
 
@@ -73,10 +76,14 @@ def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-optimizer' , default='ZOSVRG', help="choose from ZOSVRG and ZOSGD")
-    parser.add_argument('-q', type=int, default=1, help="Number of random vectors to average over for each gradient estimation")
+    parser.add_argument('-q', type=int, default=1, help="Number of random vectors to average over for each gradient estimation in SVRG")
     parser.add_argument('-alpha', type=float, default=1.0, help="Optimizer's step size being (alpha)/(input image size)")
     parser.add_argument('-M', type=int, default=50, help="Length of each stage/epoch")
     parser.add_argument('-nStage', type=int, default=1000, help="Number of stages/epochs")
+    parser.add_argument('-gamma', type=int, default=0.1, help="SCGS smoothing parameter")
+    parser.add_argument('-Mscgs', type=int, default=1, help="M parameter for SCGS")
+    parser.add_argument('-M2scgs', type=int, default=1, help="M_2 parameter for SCGS")
+    parser.add_argument('-D', type=int, default=0.5, help="D parameter for SCGS")
     parser.add_argument('-const', type=float, default=5, help="Weight put on the attack loss")
     parser.add_argument('-nFunc', type=int, default=10, help="Number of images being attacked at once")
     parser.add_argument('-batch_size', type=int, default=5, help="Number of functions sampled for each iteration in the optmization steps")

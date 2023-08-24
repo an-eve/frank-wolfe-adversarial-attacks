@@ -49,7 +49,7 @@ def ZOSVRG(delImgAT_Init, MGR, objfunc):
             if((S_idx*MGR.parSet['M']+k)%100 == 0):
                     print('Stage Index: ', S_idx, '       M Index: ', k)
                     objfunc.print_current_loss()
-            if(objfunc.Loss_Attack <= 1e-20 and objfunc.Loss_Overall < best_Loss):
+            if(objfunc.Loss_Overall < best_Loss):
                 best_Loss = objfunc.Loss_Overall
                 best_delImgAT = delImgAT_kp1_S
                 #print('Updating best delta image record')

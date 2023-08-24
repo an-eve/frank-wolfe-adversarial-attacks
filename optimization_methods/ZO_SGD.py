@@ -42,7 +42,7 @@ def ZOSGD(delImgAT_Init, MGR, objfunc):
         if(T_idx%100 == 0):
             print('Iteration Index: ', T_idx)
             objfunc.print_current_loss()
-        if(objfunc.Loss_Attack <= 1e-20 and objfunc.Loss_Overall < best_Loss):
+        if(objfunc.Loss_Overall < best_Loss):
             best_Loss = objfunc.Loss_Overall
             best_delImgAT = curret_delImgAT
             #print('Updating best delta image record')
