@@ -1,9 +1,10 @@
 import numpy as np
+import tensorflow as tf
 
 np.random.seed(2018)
 
 def CG(g_0, u_0, eta, beta):
-    T = 10 #len(beta)
+    T = len(beta)
     u = u_0.copy()
     g = g_0.copy()
     d = len(u)
@@ -27,7 +28,8 @@ def ZOSCGS(x0, N, M, M_2, epsilon, D, gamma, objfunc):
     best_Loss = 1e10
     best_delImgAT = x0
 
-    d = len(x0)
+    shp = x0.shape
+    d=shp[0]*shp[1]
     x = x0.copy()
     y = x0.copy()
 
@@ -42,14 +44,19 @@ def ZOSCGS(x0, N, M, M_2, epsilon, D, gamma, objfunc):
     for k in range(N):
         z = (1 - dzeta[k]) * x + dzeta[k] * y
         # Sampling of e and ksi:
-        e = np.random.randn(B[k], d)
+        E = np.random.randn(shp[0],shp[1],B[k])
+        norms = np.linalg.norm(E,axis=2,keepdims=True)
+        e = E/norms
         ksi = np.random.randn(B[k])
 
-        g = (1 / B[k]) * np.sum((d / (2 * gamma)) * (objfunc.evaluate(z + gamma * e,[]) - objfunc.evaluate(z - gamma * e,[])) * e, axis=0) #f is missing ksi
+        g = np.zeros(z.shape)
+        for idx in range(B[k]):
+            g += (1 / B[k]) * (d / (2 * gamma)) * (objfunc.evaluate(z + gamma * e[:,:,idx:idx+1],np.array([])) - objfunc.evaluate(z - gamma * e[:,:,idx:idx+1],np.array([]))) * e[:,:,idx:idx+1] #f is missing application of ksi
+        print("check")
         y = CG(g, y, eta[k], beta[k])
         x = (1 - dzeta[k]) * x + dzeta[k] * y
 
-        if(k%10 == 0):
+        if(k%1 == 0):
             print('Iteration Index: ', k)
             objfunc.print_current_loss()
 
