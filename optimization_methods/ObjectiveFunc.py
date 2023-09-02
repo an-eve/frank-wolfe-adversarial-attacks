@@ -62,7 +62,10 @@ class OBJFUNC:
 
         origLabels_Batched = self.origLabels[randBatchIdx]
         delImgsAT = np.repeat(np.expand_dims(delImgAT, axis=0), self.nFunc, axis=0)
-        advImgs = np.tanh(self.origImgsAT + delImgsAT)/2.0
+        norm = -np.min(self.origImgsAT)
+        Imgs=self.origImgsAT/norm
+        ImgsDel=(self.origImgsAT + delImgsAT)*norm
+        advImgs = np.tanh(ImgsDel)/2.0
         advImgs_Batched = advImgs[randBatchIdx]
 
         if(addQueryCount):
