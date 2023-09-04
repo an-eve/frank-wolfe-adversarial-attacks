@@ -10,9 +10,9 @@ def CG(g_0, u_0, gamma, eta, Q):
     d = len(u)
 
     while True:
-        V = np.argmax(np.dot(-Q+u,g+(1/gamma)*(u-u_0.reshape(-1))))
-        v = np.dot(u-Q[V],g+(1/gamma)*(u-u_0.reshape(-1)))
-        if v <= beta:
+        vidx = np.argmax(np.dot(-Q+u,g+(1/gamma)*(u-u_0.reshape(-1))))
+        v = np.dot(-Q[vidx]+u,g+(1/gamma)*(u-u_0.reshape(-1)),)
+        if v <= eta:
             return u.reshape(u_0.shape)
 
         alpha = min( gamma * np.dot((1/gamma)*(u - u_0.reshape(-1)) - g , v-u ) / (np.linalg.norm(v - u) ** 2), 1)
@@ -32,8 +32,9 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
 
     x = x0.copy()
     e = np.eye(d)
-
-    Q = np.random.choice([-1,1],size=(10000,d), p=(0.75,0.25))
+    
+    Q = np.concatenate((np.eye(d),-np.eye(d)), axis=0)
+    #Q = np.random.choice([-1,1],size=(10000,d), p=(0.75,0.25))
     #Q = [num for num in itertools.product([0,1], repeat=d)]
     #Q = np.array(Q)
 
@@ -42,6 +43,7 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
             randBatchIdx = np.random.choice(np.arange(0, MGR.parSet['nFunc']), n, replace=False)
             v = np.zeros(x.shape)
             for idx in range(d):
+                print(idx)
                 v += (1/(2*mu))*(objfunc.evaluate(x + mu * e[idx,:].reshape(shp),randBatchIdx) - objfunc.evaluate(x - mu * e[idx,:].reshape(shp),randBatchIdx)) * e[idx,:].reshape(shp)
         else:
             randBatchIdx = np.random.choice(np.arange(0, MGR.parSet['nFunc']), q, replace=True)
@@ -51,6 +53,8 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
         xprec = x.copy()
         vprec = v.copy()
         x = CG(v, x, gamma,eta,Q)
+
+        objfunc.evaluate(x,np.array([]),False)
 
         if(k%1 == 0):
             print('Iteration Index: ', k)

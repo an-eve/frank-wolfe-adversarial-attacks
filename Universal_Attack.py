@@ -67,7 +67,11 @@ def main():
     for idx_ImgID in range(MGR.parSet['nFunc']):
         currentID = origImgID[idx_ImgID]
         orig_prob = model.model.predict(np.expand_dims(origImgs[idx_ImgID], axis=0))
-        advImg = np.tanh(np.arctanh(origImgs[idx_ImgID]*1.9999999)+delImgAT)/2.0
+        origImgAT = np.arctanh(origImgs[idx_ImgID]*1.9999999)
+        norm = -np.min(origImgAT)
+        Img=origImgAT/norm
+        ImgDel=(Img + delImgAT)*norm
+        advImg = np.tanh(ImgDel)/2.0
         adv_prob  = model.model.predict(np.expand_dims(advImg, axis=0))
 
         suffix = "id{}_Orig{}_Adv{}".format(currentID, np.argmax(orig_prob), np.argmax(adv_prob))
@@ -84,12 +88,12 @@ if __name__ == "__main__":
     parser.add_argument('-alpha', type=float, default=1.0, help="Optimizer's step size being (alpha)/(input image size)")
     parser.add_argument('-M', type=int, default=50, help="Length of each stage/epoch")
     parser.add_argument('-nStage', type=int, default=1000, help="Number of stages/epochs")
-    parser.add_argument('-gamma', type=int, default=0.1, help="SCGS smoothing parameter")
-    parser.add_argument('-Mscgs', type=int, default=1, help="M parameter for SCGS")
-    parser.add_argument('-M2scgs', type=int, default=1, help="M_2 parameter for SCGS")
-    parser.add_argument('-D', type=float, default=0.5, help="D parameter for SCGS")
+    parser.add_argument('-gamma', type=float, default=1, help="SCGS smoothing parameter")
+    parser.add_argument('-Mscgs', type=float, default=1, help="M parameter for SCGS")
+    parser.add_argument('-M2scgs', type=float, default=1, help="M_2 parameter for SCGS")
+    parser.add_argument('-D', type=float, default=2, help="D parameter for SCGS")
     parser.add_argument('-K', type=int, default=2, help="K parameter for SCGS")
-    parser.add_argument('-L', type=int, default=2, help="L parameter for SCGS")
+    parser.add_argument('-L', type=float, default=2, help="L parameter for SCGS")
     parser.add_argument('-const', type=float, default=5, help="Weight put on the attack loss")
     parser.add_argument('-nFunc', type=int, default=10, help="Number of images being attacked at once")
     parser.add_argument('-batch_size', type=int, default=5, help="Number of functions sampled for each iteration in the optmization steps")
