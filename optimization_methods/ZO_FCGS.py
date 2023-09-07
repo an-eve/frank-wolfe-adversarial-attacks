@@ -8,16 +8,25 @@ def CG(g_0, u_0, gamma, eta, Q):
     u = u_0.reshape(-1)
     g = g_0.reshape(-1)
     d = len(u)
+    t = 0
+    alpha_t=1
 
     while True:
-        vidx = np.argmax(np.dot(-Q+u,g+(1/gamma)*(u-u_0.reshape(-1))))
-        v = np.dot(-Q[vidx]+u,g+(1/gamma)*(u-u_0.reshape(-1)),)
-        if v <= eta:
+        uexp = np.repeat(np.expand_dims(u,axis=1),Q.shape[1],axis=1)
+        vidx = np.argmax(np.dot(g+(1/gamma)*(u-u_0.reshape(-1)),-Q+uexp))
+        v = Q[:,vidx]
+        dot = np.dot(g+(1/gamma)*(u-u_0.reshape(-1)),-Q[:,vidx]+u)
+        #print("dot product = " + str(dot) + " ; eta = " + str(eta))
+        if (dot <= eta) or (t == 1000000) or (alpha<0.00001):
+            print('T number in CG = ' + str(t))
+            print("final alpha: " + str(alpha))
+            print(str(dot) + " " + str(eta))
             return u.reshape(u_0.shape)
 
         alpha = min( gamma * np.dot((1/gamma)*(u - u_0.reshape(-1)) - g , v-u ) / (np.linalg.norm(v - u) ** 2), 1)
-
+        #print("alpha = " + str(alpha))
         u = (1 - alpha)*u + alpha*v
+        t+=1
 
 def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
     best_Loss = 1e10
@@ -26,17 +35,20 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
     n=q**2
     shp = x0.shape
     d=shp[0]*shp[1]
-    mu=1/np.sqrt(d*kappa)
+    #mu=1/np.sqrt(d*kappa)
+    mu=2
     gamma=1/(3*L)
-    eta=1/kappa
-
+    #eta=1/kappa
+    eta=0.01
+    
     x = x0.copy()
     e = np.eye(d)
     
-    Q = np.concatenate((np.eye(d),-np.eye(d)), axis=0)
-    #Q = np.random.choice([-1,1],size=(10000,d), p=(0.75,0.25))
-    #Q = [num for num in itertools.product([0,1], repeat=d)]
-    #Q = np.array(Q)
+    num = 1500
+    Q = np.eye(d)*num
+    Qrm = np.full(Q.shape, num/d)
+    Q = Q - Qrm
+    Q= np.concatenate((Q,-Q), axis=1)
 
     for k in range(N):
         if (k%q == 0):
@@ -45,6 +57,7 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
             for idx in range(d):
                 print(idx)
                 v += (1/(2*mu))*(objfunc.evaluate(x + mu * e[idx,:].reshape(shp),randBatchIdx) - objfunc.evaluate(x - mu * e[idx,:].reshape(shp),randBatchIdx)) * e[idx,:].reshape(shp)
+            print(v[:,:,0])
         else:
             randBatchIdx = np.random.choice(np.arange(0, MGR.parSet['nFunc']), q, replace=True)
             v = np.zeros(x.shape)
@@ -52,6 +65,8 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
                 v += (1/q)*(objfunc.evaluate(x,randBatchIdx[idx:idx+1]) - objfunc.evaluate(xprec,randBatchIdx[idx:idx+1]) + vprec)
         xprec = x.copy()
         vprec = v.copy()
+
+
         x = CG(v, x, gamma,eta,Q)
 
         objfunc.evaluate(x,np.array([]),False)

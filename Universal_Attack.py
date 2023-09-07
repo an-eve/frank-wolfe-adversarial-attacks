@@ -25,6 +25,7 @@ sys.path.append('models/')
 sys.path.append('optimization_methods/')
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import numpy as np
 import argparse
 
@@ -67,11 +68,7 @@ def main():
     for idx_ImgID in range(MGR.parSet['nFunc']):
         currentID = origImgID[idx_ImgID]
         orig_prob = model.model.predict(np.expand_dims(origImgs[idx_ImgID], axis=0))
-        origImgAT = np.arctanh(origImgs[idx_ImgID]*1.9999999)
-        norm = -np.min(origImgAT)
-        Img=origImgAT/norm
-        ImgDel=(Img + delImgAT)*norm
-        advImg = np.tanh(ImgDel)/2.0
+        advImg = np.tanh(np.arctanh(origImgs[idx_ImgID]*1.9999999)+delImgAT)/2.0
         adv_prob  = model.model.predict(np.expand_dims(advImg, axis=0))
 
         suffix = "id{}_Orig{}_Adv{}".format(currentID, np.argmax(orig_prob), np.argmax(adv_prob))
@@ -88,18 +85,18 @@ if __name__ == "__main__":
     parser.add_argument('-alpha', type=float, default=1.0, help="Optimizer's step size being (alpha)/(input image size)")
     parser.add_argument('-M', type=int, default=50, help="Length of each stage/epoch")
     parser.add_argument('-nStage', type=int, default=1000, help="Number of stages/epochs")
-    parser.add_argument('-gamma', type=float, default=1, help="SCGS smoothing parameter")
+    parser.add_argument('-gamma', type=float, default=0.01, help="SCGS smoothing parameter")
     parser.add_argument('-Mscgs', type=float, default=1, help="M parameter for SCGS")
     parser.add_argument('-M2scgs', type=float, default=1, help="M_2 parameter for SCGS")
     parser.add_argument('-D', type=float, default=2, help="D parameter for SCGS")
-    parser.add_argument('-K', type=int, default=2, help="K parameter for SCGS")
-    parser.add_argument('-L', type=float, default=2, help="L parameter for SCGS")
-    parser.add_argument('-const', type=float, default=5, help="Weight put on the attack loss")
+    parser.add_argument('-K', type=float, default=0.1, help="K parameter for FCGS")
+    parser.add_argument('-L', type=float, default=1, help="L parameter for FCGS")
+    parser.add_argument('-const', type=float, default=1, help="Weight put on the attack loss")
     parser.add_argument('-nFunc', type=int, default=10, help="Number of images being attacked at once")
     parser.add_argument('-batch_size', type=int, default=5, help="Number of functions sampled for each iteration in the optmization steps")
     parser.add_argument('-mu', type=float, default=0.01, help="The weighting magnitude for the random vector applied to estimate gradients in ZOSVRG")
     parser.add_argument('-rv_dist', default='UnitSphere', help="Choose from UnitSphere and UnitBall")
-    parser.add_argument('-target_label', type=int, default=1, help="The target digit to attack")
+    parser.add_argument('-target_label', type=int, default=4, help="The target digit to attack")
     args = vars(parser.parse_args())
 
     for par in args:

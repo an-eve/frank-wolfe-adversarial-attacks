@@ -40,6 +40,7 @@ def ZOSGD(delImgAT_Init, MGR, objfunc):
 
         objfunc.evaluate(curret_delImgAT, np.array([]), False)
         if(T_idx%100 == 0):
+            print(np.sum(np.abs(curret_delImgAT-delImgAT_Init)))
             print('Iteration Index: ', T_idx)
             objfunc.print_current_loss()
         if(objfunc.Loss_Overall < best_Loss):
