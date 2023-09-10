@@ -94,12 +94,12 @@ def ZOSCGS(x0, N, M, M_2, epsilon, D, gamma, MGR, objfunc):
             #print("z " +str(objfunc.evaluate(z,randBatchIdx[idx:idx+1])))
             #print(gamma * e[:,:,idx])
             g += (1 / B[k]) * (d / (2 * gamma)) * (objfunc.evaluate(z + gamma * e[:,:,idx:idx+1],randBatchIdx[idx:idx+1]) - objfunc.evaluate(z - gamma * e[:,:,idx:idx+1],randBatchIdx[idx:idx+1])) * e[:,:,idx:idx+1]
-            #g += (1 / B[k]) * (d / (2 * gamma)) * (objfunc.evaluate(z + gamma * e[:,:,idx:idx+1], np.array([])) - objfunc.evaluate(z - gamma * e[:,:,idx:idx+1], np.array([]))) * e[:,:,idx:idx+1]
         #print(g[:,:,0])
         y = CG(g, y, eta[k], beta[k], Q)
         #print(y[:,:,0])
         x = (1 - dzeta[k]) * x + (dzeta[k] * y)
         print(np.sum(np.abs(x-x0)))
+        print(np.linalg.norm(x,x0))
         print(np.sum(x-x0))
 
         objfunc.evaluate(x,np.array([]),False)
