@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import itertools
+import time
 
 import Utils as util
 
@@ -14,8 +15,11 @@ def CG(g_0, u_0, eta, beta, Q):
     alpha_t=1
 
     while True:
-        vidx = np.argmin(np.dot(g,Q))
-        v=Q[:,vidx]
+        #vidx = np.argmin(np.dot(g,Q))
+        #v=Q[:,vidx]
+
+        v = -np.sign(g)*4
+
         dot=np.dot(g, u - v)
         #print(str(dot) + " " + str(beta))
         if (dot <= beta) or (t==1000000) or (alpha_t<0.00001):
@@ -55,6 +59,7 @@ def CGfcgs(g_0, u_0, gamma, eta, Q):
         t+=1
 
 def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
+    start_time = time.time()
     best_Loss = 1e10
     best_delImgAT = x0
 
@@ -80,8 +85,7 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
 
     for k in range(N):
         if (k%q == 0):
-            randBatchIdx = np.random.choice(np.arange(0, MGR.parSet['nFunc']), B, replace=True)
-            #randBatchIdx = np.random.choice(np.arange(0, MGR.parSet['nFunc']), n, replace=False)
+            randBatchIdx = np.random.choice(np.arange(0, MGR.parSet['nFunc']), n, replace=False)
             E = np.random.uniform(-1.0, 1.0, size=(shp[0],shp[1],B))
             norms = np.linalg.norm(E,axis=(0,1),keepdims=True)
             e = E/norms
@@ -100,7 +104,7 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
                 #for idx in range(d):
                 #    v += ((objfunc.evaluate(x + mu * e[idx,:].reshape(shp),randBatchIdx[qidx:qidx+1]) - objfunc.evaluate(x - mu * e[idx,:].reshape(shp),randBatchIdx[qidx:qidx+1])) * e[idx,:].reshape(shp)) - ((objfunc.evaluate(xprec + mu * e[idx,:].reshape(shp),randBatchIdx[qidx:qidx+1]) - objfunc.evaluate(xprec - mu * e[idx,:].reshape(shp),randBatchIdx[qidx:qidx+1])) * e[idx,:].reshape(shp))
             v = (1/B)*(1/(2*mu))*(v/q)+vprec
-        print(v[:,:,0])
+        #print(v[:,:,0])
         xprec = x.copy()
         vprec = v.copy()
 
@@ -118,10 +122,11 @@ def ZOFCGS(x0, N, q, kappa, L, MGR, objfunc):
             best_delImgAT = x
             #print('Updating best delta image record')
 
-        util.save_img(np.tanh(x/4)/2.0, "{}/Delta_{}.png".format(MGR.parSet['save_path'],k))
+        #util.save_img(np.tanh(x/4)/2.0, "{}/Delta_{}.png".format(MGR.parSet['save_path'],k))
 
         MGR.logHandler.write('Iteration Index: ' + str(k))
         MGR.logHandler.write(' Query_Count: ' + str(objfunc.query_count))
+        MGR.logHandler.write(' Time: ' + str(time.time()-start_time))
         MGR.logHandler.write(' Loss_Overall: ' + str(objfunc.Loss_Overall))
         MGR.logHandler.write(' Loss_Distortion: ' + str(objfunc.Loss_L2))
         MGR.logHandler.write(' Loss_Attack: ' + str(objfunc.Loss_Attack))

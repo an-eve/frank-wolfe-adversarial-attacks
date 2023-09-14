@@ -18,10 +18,12 @@
 ## limitations under the License.
 
 import numpy as np
+import time
 
 np.random.seed(2018)
 
 def ZOSGD(delImgAT_Init, MGR, objfunc):
+    start_time = time.time()
 
 
     T = MGR.parSet['nStage']*MGR.parSet['M']
@@ -50,6 +52,7 @@ def ZOSGD(delImgAT_Init, MGR, objfunc):
 
         MGR.logHandler.write('Iteration Index: ' + str(T_idx))
         MGR.logHandler.write(' Query_Count: ' + str(objfunc.query_count))
+        MGR.logHandler.write(' Time: ' + str(time.time()-start_time))
         MGR.logHandler.write(' Loss_Overall: ' + str(objfunc.Loss_Overall))
         MGR.logHandler.write(' Loss_Distortion: ' + str(objfunc.Loss_L2))
         MGR.logHandler.write(' Loss_Attack: ' + str(objfunc.Loss_Attack))

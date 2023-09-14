@@ -1,0 +1,71 @@
+optimizer ZOFWSA
+q 1
+alpha 1.0
+M 50
+nStage 50
+gamma 0.01
+Mscgs 1
+M2scgs 1
+D 2
+K 0.1
+L 1
+m 50
+const 1
+nFunc 10
+batch_size 5
+mu 0.01
+rv_dist UnitSphere
+SA KWSA
+target_label 4
+save_path Results/ZOFWSA/
+eta 0.0012755102040816326
+Iteration Index: 0 Query_Count: 785 Loss_Overall: 27.079499712939096 Loss_Distortion: 12.688471308703255 Loss_Attack: 14.391028 Current_Best_Distortion: 27.079499712939096
+Iteration Index: 1 Query_Count: 1570 Loss_Overall: 33.89078361535726 Loss_Distortion: 8.606499023682455 Loss_Attack: 25.284285 Current_Best_Distortion: 27.079499712939096
+Iteration Index: 2 Query_Count: 2355 Loss_Overall: 24.15120718210628 Loss_Distortion: 11.457612249550127 Loss_Attack: 12.693595 Current_Best_Distortion: 24.15120718210628
+Iteration Index: 3 Query_Count: 3140 Loss_Overall: 21.625523701214966 Loss_Distortion: 8.507441654706179 Loss_Attack: 13.118082 Current_Best_Distortion: 21.625523701214966
+Iteration Index: 4 Query_Count: 3925 Loss_Overall: 21.723265295524154 Loss_Distortion: 11.517701750297103 Loss_Attack: 10.205564 Current_Best_Distortion: 21.625523701214966
+Iteration Index: 5 Query_Count: 4710 Loss_Overall: 24.462931002333224 Loss_Distortion: 10.0044043910051 Loss_Attack: 14.458527 Current_Best_Distortion: 21.625523701214966
+Iteration Index: 6 Query_Count: 5495 Loss_Overall: 26.008398073216682 Loss_Distortion: 8.87516404916883 Loss_Attack: 17.133234 Current_Best_Distortion: 21.625523701214966
+Iteration Index: 7 Query_Count: 6280 Loss_Overall: 20.330207085833656 Loss_Distortion: 10.548437333331215 Loss_Attack: 9.78177 Current_Best_Distortion: 20.330207085833656
+Iteration Index: 8 Query_Count: 7065 Loss_Overall: 20.66800917148496 Loss_Distortion: 12.010284790991795 Loss_Attack: 8.657724 Current_Best_Distortion: 20.330207085833656
+Iteration Index: 9 Query_Count: 7850 Loss_Overall: 17.897132756879056 Loss_Distortion: 10.358945253064359 Loss_Attack: 7.5381875 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 10 Query_Count: 8635 Loss_Overall: 22.005820520568037 Loss_Distortion: 9.316055544066574 Loss_Attack: 12.689765 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 11 Query_Count: 9420 Loss_Overall: 20.92088624851109 Loss_Distortion: 7.926061839026223 Loss_Attack: 12.994824 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 12 Query_Count: 10205 Loss_Overall: 21.234633770186306 Loss_Distortion: 7.965414371687771 Loss_Attack: 13.269219 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 13 Query_Count: 10990 Loss_Overall: 26.497371227497332 Loss_Distortion: 8.797894985431903 Loss_Attack: 17.699476 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 14 Query_Count: 11775 Loss_Overall: 24.836485725451794 Loss_Distortion: 9.386322837878554 Loss_Attack: 15.450163 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 15 Query_Count: 12560 Loss_Overall: 23.5493610334665 Loss_Distortion: 9.409449381855172 Loss_Attack: 14.139912 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 16 Query_Count: 13345 Loss_Overall: 23.619427745282042 Loss_Distortion: 9.108750407635558 Loss_Attack: 14.510677 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 17 Query_Count: 14130 Loss_Overall: 26.61064012322495 Loss_Distortion: 7.827745988703467 Loss_Attack: 18.782894 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 18 Query_Count: 14915 Loss_Overall: 29.025332467185862 Loss_Distortion: 7.880097405540354 Loss_Attack: 21.145235 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 19 Query_Count: 15700 Loss_Overall: 32.0243745210759 Loss_Distortion: 7.788824594318083 Loss_Attack: 24.23555 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 20 Query_Count: 16485 Loss_Overall: 32.207415575207065 Loss_Distortion: 8.405497545421913 Loss_Attack: 23.801918 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 21 Query_Count: 17270 Loss_Overall: 26.591762773731 Loss_Distortion: 8.872633211353067 Loss_Attack: 17.71913 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 22 Query_Count: 18055 Loss_Overall: 27.85718472551377 Loss_Distortion: 9.309935885181735 Loss_Attack: 18.547249 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 23 Query_Count: 18840 Loss_Overall: 23.70768516563799 Loss_Distortion: 9.46603839897539 Loss_Attack: 14.241647 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 24 Query_Count: 19625 Loss_Overall: 21.375903115489 Loss_Distortion: 9.324577317454331 Loss_Attack: 12.051326 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 25 Query_Count: 20410 Loss_Overall: 18.92189819191281 Loss_Distortion: 9.10351974342648 Loss_Attack: 9.818378 Current_Best_Distortion: 17.897132756879056
+Iteration Index: 26 Query_Count: 21195 Loss_Overall: 13.476149573664364 Loss_Distortion: 9.013717666010555 Loss_Attack: 4.462432 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 27 Query_Count: 21980 Loss_Overall: 15.346669487225839 Loss_Distortion: 9.020032219159432 Loss_Attack: 6.3266373 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 28 Query_Count: 22765 Loss_Overall: 17.870353358546105 Loss_Distortion: 8.885029452601282 Loss_Attack: 8.985324 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 29 Query_Count: 23550 Loss_Overall: 18.131175391678386 Loss_Distortion: 8.538287513260418 Loss_Attack: 9.592888 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 30 Query_Count: 24335 Loss_Overall: 20.651522899123584 Loss_Distortion: 7.710637355300341 Loss_Attack: 12.940886 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 31 Query_Count: 25120 Loss_Overall: 18.115770324013546 Loss_Distortion: 7.311113341591671 Loss_Attack: 10.804657 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 32 Query_Count: 25905 Loss_Overall: 18.29498928165605 Loss_Distortion: 7.226407700540326 Loss_Attack: 11.068582 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 33 Query_Count: 26690 Loss_Overall: 18.916209824565545 Loss_Distortion: 7.0798813180958176 Loss_Attack: 11.8363285 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 34 Query_Count: 27475 Loss_Overall: 19.576398094921394 Loss_Distortion: 6.773205956249521 Loss_Attack: 12.803192 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 35 Query_Count: 28260 Loss_Overall: 22.5444372443014 Loss_Distortion: 6.313978031044565 Loss_Attack: 16.23046 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 36 Query_Count: 29045 Loss_Overall: 23.7260891103413 Loss_Distortion: 6.012965788808094 Loss_Attack: 17.713123 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 37 Query_Count: 29830 Loss_Overall: 24.864255343995946 Loss_Distortion: 6.2031511417254395 Loss_Attack: 18.661104 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 38 Query_Count: 30615 Loss_Overall: 25.382486391923756 Loss_Distortion: 6.3923054226854745 Loss_Attack: 18.990181 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 39 Query_Count: 31400 Loss_Overall: 25.76546828610293 Loss_Distortion: 6.932889627045315 Loss_Attack: 18.832579 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 40 Query_Count: 32185 Loss_Overall: 24.829247637857158 Loss_Distortion: 7.387459918130597 Loss_Attack: 17.441788 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 41 Query_Count: 32970 Loss_Overall: 22.591104546271396 Loss_Distortion: 7.750783005438876 Loss_Attack: 14.840322 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 42 Query_Count: 33755 Loss_Overall: 19.0706264658164 Loss_Distortion: 8.082960335750482 Loss_Attack: 10.987666 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 43 Query_Count: 34540 Loss_Overall: 16.721260354701208 Loss_Distortion: 8.417538926783726 Loss_Attack: 8.303721 Current_Best_Distortion: 13.476149573664364
+Iteration Index: 44 Query_Count: 35325 Loss_Overall: 12.95270209983334 Loss_Distortion: 8.812429005656094 Loss_Attack: 4.140273 Current_Best_Distortion: 12.95270209983334
+Iteration Index: 45 Query_Count: 36110 Loss_Overall: 13.993224933724347 Loss_Distortion: 9.109347179512921 Loss_Attack: 4.8838778 Current_Best_Distortion: 12.95270209983334
+Iteration Index: 46 Query_Count: 36895 Loss_Overall: 17.54778743969655 Loss_Distortion: 9.11079956280446 Loss_Attack: 8.436988 Current_Best_Distortion: 12.95270209983334
+Iteration Index: 47 Query_Count: 37680 Loss_Overall: 19.11259543460825 Loss_Distortion: 8.71826827091196 Loss_Attack: 10.394327 Current_Best_Distortion: 12.95270209983334
+Iteration Index: 48 Query_Count: 38465 Loss_Overall: 22.02971044362358 Loss_Distortion: 7.91950670064262 Loss_Attack: 14.110204 Current_Best_Distortion: 12.95270209983334
+Iteration Index: 49 Query_Count: 39250 Loss_Overall: 24.885617153453346 Loss_Distortion: 7.085385219859596 Loss_Attack: 17.800232 Current_Best_Distortion: 12.95270209983334

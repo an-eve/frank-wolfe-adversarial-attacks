@@ -36,6 +36,7 @@ import ZO_SVRG as svrg
 import ZO_SGD as sgd
 import ZO_SCGS as scgs
 import ZO_FCGS as fcgs
+import ZO_FWSA as fwsa
 from SysManager import SYS_MANAGER
 
 
@@ -61,6 +62,8 @@ def main():
         delImgAT = scgs.ZOSCGS(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['Mscgs'], MGR.parSet['M2scgs'], MGR.parSet['alpha'], MGR.parSet['D'], MGR.parSet['gamma'], MGR,  objfunc)
     elif(MGR.parSet['optimizer'] == 'ZOFCGS'):
         delImgAT = fcgs.ZOFCGS(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['q'], MGR.parSet['K'], MGR.parSet['L'], MGR,  objfunc)
+    elif(MGR.parSet['optimizer'] == 'ZOFWSA'):
+        delImgAT = fwsa.ZOFWSA(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['m'], MGR.parSet['SA'], MGR,  objfunc)
     else:
         print('Please specify a valid optimizer')
 
@@ -91,11 +94,13 @@ if __name__ == "__main__":
     parser.add_argument('-D', type=float, default=2, help="D parameter for SCGS")
     parser.add_argument('-K', type=float, default=0.1, help="K parameter for FCGS")
     parser.add_argument('-L', type=float, default=1, help="L parameter for FCGS")
+    parser.add_argument('-m', type=int, default=50, help="I-RDSA number of random vectors")
     parser.add_argument('-const', type=float, default=1, help="Weight put on the attack loss")
     parser.add_argument('-nFunc', type=int, default=10, help="Number of images being attacked at once")
     parser.add_argument('-batch_size', type=int, default=5, help="Number of functions sampled for each iteration in the optmization steps")
     parser.add_argument('-mu', type=float, default=0.01, help="The weighting magnitude for the random vector applied to estimate gradients in ZOSVRG")
     parser.add_argument('-rv_dist', default='UnitSphere', help="Choose from UnitSphere and UnitBall")
+    parser.add_argument('-SA', default='IRDSA', help="Choose type of FWSA between KWSA, RDSA and IRDSA")
     parser.add_argument('-target_label', type=int, default=4, help="The target digit to attack")
     args = vars(parser.parse_args())
 

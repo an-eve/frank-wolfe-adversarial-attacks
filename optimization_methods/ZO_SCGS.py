@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import itertools
+import time
 
 import Utils as util
 
@@ -14,8 +15,13 @@ def CG(g_0, u_0, eta, beta, Q):
     alpha_t=1
 
     while True:
-        vidx = np.argmin(np.dot(g,Q))
-        v=Q[:,vidx]
+
+        #vidx = np.argmin(np.dot(g,Q))
+        #v=Q[:,vidx]
+
+        v = -np.sign(g)*4
+
+
         dot=np.dot(g, u - v)
         #print(str(dot) + " " + str(beta))
         if (dot <= beta) or (t==1000000) or (alpha_t<0.00001):
@@ -31,6 +37,7 @@ def CG(g_0, u_0, eta, beta, Q):
         t+=1
 
 def ZOSCGS(x0, N, M, M_2, epsilon, D, gamma, MGR, objfunc):
+    start_time = time.time()
     best_Loss = 1e10
     best_delImgAT = x0
 
@@ -68,11 +75,12 @@ def ZOSCGS(x0, N, M, M_2, epsilon, D, gamma, MGR, objfunc):
     #Q=Qpos
     #Q = np.concatenate((Qpos,-Qpos),axis=1)
     #Q = np.concatenate((np.eye(d),-np.eye(d)), axis=1)
+
     Q = np.eye(d)*num
-    #Q = np.transpose(Q)
     Qrm = np.full(Q.shape, num/d)
     Q = Q - Qrm
     Q= np.concatenate((Q,-Q), axis=1)
+
     #print(Q)
 
     for k in range(N):
@@ -98,9 +106,9 @@ def ZOSCGS(x0, N, M, M_2, epsilon, D, gamma, MGR, objfunc):
         y = CG(g, y, eta[k], beta[k], Q)
         #print(y[:,:,0])
         x = (1 - dzeta[k]) * x + (dzeta[k] * y)
-        print(np.sum(np.abs(x-x0)))
-        print(np.linalg.norm(x,x0))
-        print(np.sum(x-x0))
+        #print(np.sum(np.abs(x-x0)))
+        #print(np.linalg.norm(x,x0))
+        #print(np.sum(x-x0))
 
         objfunc.evaluate(x,np.array([]),False)
 
@@ -117,6 +125,7 @@ def ZOSCGS(x0, N, M, M_2, epsilon, D, gamma, MGR, objfunc):
 
         MGR.logHandler.write('Iteration Index: ' + str(k))
         MGR.logHandler.write(' Query_Count: ' + str(objfunc.query_count))
+        MGR.logHandler.write(' Time: ' + str(time.time()-start_time))
         MGR.logHandler.write(' Loss_Overall: ' + str(objfunc.Loss_Overall))
         MGR.logHandler.write(' Loss_Distortion: ' + str(objfunc.Loss_L2))
         MGR.logHandler.write(' Loss_Attack: ' + str(objfunc.Loss_Attack))
