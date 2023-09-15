@@ -10,13 +10,13 @@
 \section*{Abstract}
 
 In this project, our primary objective is to analyze three gradient-free modifications 
-(SGFFW \cite{sahu19a}, FZCGS \cite{gao20b} and ZO-SCGS \cite{lobanov2023})
+(\textit{SGFFW} \cite{sahu19a}, \textit{FZCGS} \cite{gao20b} and \textit{ZO-SCGS} \cite{lobanov2023})
 of the original Frank-Wolfe algorithm. We aim to gain a deep understanding of 
 the theory behind these algorithms and to evaluate their performance in a
 practical scenario. 
 
 The aforementioned algorithms are specifically designed for constrained 
-stochastic optimization problems. They focus on enhancing the iteration complexity, 
+stochastic non-convex optimization problems. They focus on enhancing the iteration complexity, 
 which depends on the number of oracle queries, in comparison to existing algorithms. 
 Furthermore, the algorithms aspire to be competitive with their first-order counterparts 
 in terms of complexity.
@@ -55,7 +55,7 @@ problem takes one of the following forms:
     where $\Omega \subset \mathbb{R}^d$ denotes a closed convex feasible set \cite{gao20b}.
 \end{enumerate}
 
-One of the potential solutions to the problems Eq.~\ref{eq:stochastic}, \ref{eq:finite-sum} 
+One of the potential solutions to the problems Eq.~\eqref{eq:stochastic}, \eqref{eq:finite-sum} 
 is the utilization of projection-free methods, such as the Frank-Wolfe algorithm. 
 Furthermore, in the papers, they emphasize a stochastic variant of this method that 
 relies on a zeroth-order oracle (function queries). Derivative-free optimization finds 
@@ -66,8 +66,8 @@ Hence, the application of such algorithms is driven by tangible practical benefi
 In the articles, innovative and more refined modifications are introduced, 
 which demand fewer oracle queries to converge to a solution. It's worth noting 
 that the initial assumptions about the problem vary slightly. For instance, 
-in SGFFW \cite{sahu19a}  and FZCGS \cite{gao20b}, they tackle non-convex smooth
-functions, whereas in ZO-SCGS \cite{lobanov2023}, their focus is on convex but non-smooth functions.
+in \textit{SGFFW} \cite{sahu19a}  and \textit{FZCGS} \cite{gao20b}, they tackle non-convex smooth
+functions, whereas in \textit{ZO-SCGS} \cite{lobanov2023}, their focus is on convex but non-smooth functions.
 
 
 \subsection{Frank-Wolfe Algorithm}
@@ -130,8 +130,123 @@ denotes the basis vector where only the $j$-th element is 1 and all the others a
 The algorithms under investigation incorporate several approaches for 
 approximating the gradient.
 
+\section{SGFFW Algorithm}
+
+The first algorithm that we are studying in our project is 
+\textit{Stochastic Gradient-Free Frank-Wolfe (SGFFW)}, which combines 
+the principles of stochastic optimization with the Frank-Wolfe framework.
+
+\textit{SGFFW} builds upon the classic Frank-Wolfe algorithm. However, 
+instead of relying on full gradients, \textit{SGFFW} uses stochastic 
+gradient estimates, making it suitable for large-scale and noisy 
+optimization problems.
+
+In the article, \textit{SGFFW} addresses the problem represented by 
+eq. \eqref{eq:stochastic}.
+
+In the SGFFW update scheme, the linear minimization and subsequent steps 
+differ from those in the ordinary Stochastic Frank-Wolfe method.
+
+\begin{equation}
+    \mathbf{d}_t=\left(1-\rho_t\right) \mathbf{d}_{t-1}+\rho_t \mathbf{g}\left(\mathbf{x}_t, \mathbf{y}_t\right)
+\label{eq:sahu-d-update}
+\end{equation}
+    
+\begin{equation}
+    \mathbf{v}_t=\underset{\mathbf{v} \in \mathcal{C}}{\operatorname{argmin}}\left\langle\mathbf{d}_t, \mathbf{v}\right\rangle 
+\label{eq:sahu-v-update}
+\end{equation}
+
+\begin{equation}
+    \mathbf{x}_{t+1}=\left(1-\gamma_{t+1}\right) \mathbf{x}_t+\gamma_{t+1} \mathbf{v}_t,
+\label{eq:sahu-x-update}
+\end{equation}
+
+where $g\left(\mathbf{x}_t, \mathbf{y}_t\right)$ is a gradient approximation,
+$\mathbf{d}_0=\mathbf{0}$ and $\rho_t$ is a time-decaying sequence.
+ 
+
+
+The most inportant properties of the algorithm:
+
+\begin{itemize}[left=0pt,labelindent=0pt]
+    \item A straightforward substitution of $\nabla f(\mathbf{x}_k)$ with 
+    its stochastic counterpart, $\nabla F(\mathbf{x}_k ; \mathbf{y}_k)$, 
+    carries the potential for divergence, primarily owing to the persistent 
+    variance within gradient approximations.
+    
+    \item The algorithm explores three distinct gradient approximation strategies.
+    
+    \begin{enumerate}[left=0pt,labelindent=0pt]
+        \item \textit{KWSA}
+        \small{
+        $$
+        \mathbf{g}\left(\mathbf{x}_t ; \mathbf{y}\right)=\sum_{i=1}^d \frac{F\left(\mathbf{x}_t+c_t \mathbf{e}_i ; \mathbf{y}\right)-F\left(\mathbf{x}_t ; \mathbf{y}\right)}{c_t} \mathbf{e}_i
+        $$
+        }
+        \item \textit{RDSA}
+
+        Sample $\mathbf{z}_t \sim \mathcal{N}\left(0, \mathbf{I}_d\right)$,
+        
+        \small{
+        $$
+        \mathbf{g}\left(\mathbf{x}_t ; \mathbf{y}, \mathbf{z}_t\right)=\frac{F\left(\mathbf{x}_t+c_t \mathbf{z}_t ; \mathbf{y}\right)-F\left(\mathbf{x}_t ; \mathbf{y}\right)}{c_t} \mathbf{z}_t
+        $$
+        }
+
+        \item \textit{I-RDSA}
+        
+        Sample $\left\{\mathbf{z}_{i, t}\right\}_{i=1}^m \sim \mathcal{N}\left(0, \mathbf{I}_d\right)$,
+        \small{
+        $$
+        \mathbf{g}\left(\mathbf{x}_t ; \mathbf{y}, \mathbf{z}_t\right)=\frac{1}{m} \sum_{i=1}^m \frac{F\left(\mathbf{x}_t+c_t \mathbf{z}_{i, t} ; \mathbf{y}\right)-F\left(\mathbf{x}_t ; \mathbf{y}\right)}{c_t} \mathbf{z}_{i, t}
+        $$
+        }
+    \end{enumerate}
+    
+    \item The parameter  $\gamma_t$ are set as $\gamma_t=\dfrac{2}{t+8}$.
+\end{itemize}
+
+
+\subsection{SGFFW: Convergence Analysis}
+
+It emerges that, under certain assumptions, the primal sub-optimality gap 
+$\mathbb{E}\left[f\left(\mathbf{x}_t\right)-f\left(\mathbf{x}^*\right)\right]$ 
+in the convex case is found to be $O(\dfrac{d^{1/3}}{T^{1/3}})$. 
+This matches the performance of the stochastic Frank-Wolfe algorithm, 
+which has access to first-order information. The number of queries required by 
+stochastic zeroth order oracle to achieve a primal gap of $\epsilon$, i.e., 
+$\mathbb{E}\left[f\left(\mathbf{x}_t\right)-f\left(\mathbf{x}^*\right)\right] \leq \epsilon$, 
+is given by $O\left(\dfrac{d}{\epsilon^3}\right)$. 
+
+At the same time, in a non-convex scenario, the primal sub-optimality gap and the
+number of queries are $O(\dfrac{d^{1/3}}{T^{1/4}})$ and $O\left(\dfrac{d^{4/3}}{\epsilon^4}\right)$, 
+respectively.
+
+Hence, the rate of convergence of the proposed algorithm in terms of the 
+primal gap is showed to match its first order counterpart in terms
+of iterations.
+
+ 
 \medskip
 \printbibliography % Print bibliography
 
 \end{multicols}% end two-column layout 
 \end{document}
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
