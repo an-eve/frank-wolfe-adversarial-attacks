@@ -25,6 +25,7 @@ sys.path.append('models/')
 sys.path.append('optimization_methods/')
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import numpy as np
 import argparse
 
@@ -34,6 +35,8 @@ import ObjectiveFunc
 import ZO_SVRG as svrg
 import ZO_SGD as sgd
 import ZO_SCGS as scgs
+import ZO_FCGS as fcgs
+import ZO_FWSA as fwsa
 from SysManager import SYS_MANAGER
 
 
@@ -43,9 +46,10 @@ def main():
 
     data, model =  MNIST(), MNISTModel(restore="models/mnist", use_log=True)
     origImgs, origLabels, origImgID = util.generate_attack_data_set(data, model, MGR)
-
     delImgAT_Init = np.zeros(origImgs[0].shape)
     objfunc = ObjectiveFunc.OBJFUNC(MGR, model, origImgs, origLabels)
+
+    print(data.test_data.shape)
 
     MGR.Add_Parameter('eta', MGR.parSet['alpha']/origImgs[0].size)
     MGR.Log_MetaData()
@@ -55,7 +59,11 @@ def main():
     elif(MGR.parSet['optimizer'] == 'ZOSGD'):
         delImgAT = sgd.ZOSGD(delImgAT_Init, MGR, objfunc)
     elif(MGR.parSet['optimizer'] == 'ZOSCGS'):
-        delImgAT = scgs.ZOSCGS(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['Mscgs'], MGR.parSet['M2scgs'], MGR.parSet['alpha'], MGR.parSet['D'], MGR.parSet['gamma'],  objfunc)
+        delImgAT = scgs.ZOSCGS(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['Mscgs'], MGR.parSet['M2scgs'], MGR.parSet['alpha'], MGR.parSet['D'], MGR.parSet['gamma'], MGR,  objfunc)
+    elif(MGR.parSet['optimizer'] == 'ZOFCGS'):
+        delImgAT = fcgs.ZOFCGS(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['q'], MGR.parSet['K'], MGR.parSet['L'], MGR,  objfunc)
+    elif(MGR.parSet['optimizer'] == 'ZOFWSA'):
+        delImgAT = fwsa.ZOFWSA(delImgAT_Init, MGR.parSet['nStage'], MGR.parSet['m'], MGR.parSet['SA'], MGR,  objfunc)
     else:
         print('Please specify a valid optimizer')
 
@@ -76,20 +84,24 @@ def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-optimizer' , default='ZOSVRG', help="choose from ZOSVRG and ZOSGD")
-    parser.add_argument('-q', type=int, default=1, help="Number of random vectors to average over for each gradient estimation in SVRG")
+    parser.add_argument('-q', type=int, default=1, help="Number of random vectors to average over for each gradient estimation in SVRG, batch size for s2 for FCGS")
     parser.add_argument('-alpha', type=float, default=1.0, help="Optimizer's step size being (alpha)/(input image size)")
     parser.add_argument('-M', type=int, default=50, help="Length of each stage/epoch")
     parser.add_argument('-nStage', type=int, default=1000, help="Number of stages/epochs")
-    parser.add_argument('-gamma', type=int, default=0.1, help="SCGS smoothing parameter")
-    parser.add_argument('-Mscgs', type=int, default=1, help="M parameter for SCGS")
-    parser.add_argument('-M2scgs', type=int, default=1, help="M_2 parameter for SCGS")
-    parser.add_argument('-D', type=int, default=0.5, help="D parameter for SCGS")
-    parser.add_argument('-const', type=float, default=5, help="Weight put on the attack loss")
+    parser.add_argument('-gamma', type=float, default=0.01, help="SCGS smoothing parameter")
+    parser.add_argument('-Mscgs', type=float, default=1, help="M parameter for SCGS")
+    parser.add_argument('-M2scgs', type=float, default=1, help="M_2 parameter for SCGS")
+    parser.add_argument('-D', type=float, default=2, help="D parameter for SCGS")
+    parser.add_argument('-K', type=float, default=0.1, help="K parameter for FCGS")
+    parser.add_argument('-L', type=float, default=1, help="L parameter for FCGS")
+    parser.add_argument('-m', type=int, default=50, help="I-RDSA number of random vectors")
+    parser.add_argument('-const', type=float, default=1, help="Weight put on the attack loss")
     parser.add_argument('-nFunc', type=int, default=10, help="Number of images being attacked at once")
     parser.add_argument('-batch_size', type=int, default=5, help="Number of functions sampled for each iteration in the optmization steps")
     parser.add_argument('-mu', type=float, default=0.01, help="The weighting magnitude for the random vector applied to estimate gradients in ZOSVRG")
     parser.add_argument('-rv_dist', default='UnitSphere', help="Choose from UnitSphere and UnitBall")
-    parser.add_argument('-target_label', type=int, default=1, help="The target digit to attack")
+    parser.add_argument('-SA', default='IRDSA', help="Choose type of FWSA between KWSA, RDSA and IRDSA")
+    parser.add_argument('-target_label', type=int, default=4, help="The target digit to attack")
     args = vars(parser.parse_args())
 
     for par in args:
