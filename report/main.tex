@@ -18,8 +18,7 @@ practical scenario.
 The aforementioned algorithms are specifically designed for constrained 
 stochastic non-convex optimization problems. They focus on enhancing the iteration complexity, 
 which depends on the number of oracle queries, in comparison to existing algorithms. 
-Furthermore, the algorithms aspire to be competitive with their first-order counterparts 
-in terms of complexity.
+Furthermore, the algorithms aspire to be competitive with their first-order counterparts.
 
 Following a theoretical summary of these methods, we conduct practical tests, 
 subjecting the algorithms to a \href{https://github.com/IBM/ZOSVRG-BlackBox-Adv}{black-box attacks} 
@@ -37,22 +36,20 @@ problem takes one of the following forms:
     \item \textit{Stochastic} 
 
     \begin{equation}
-    \min _{\mathbf{x} \in \Omega} f(\mathbf{x})=\min _{x \in \Omega} \mathbb{E}_{\mathbf{y} \sim \mathcal{P}}[F(\mathbf{x} ; \mathbf{y})], 
+    \min _{\mathbf{x} \in \mathcal{C}} f(\mathbf{x})=\min _{x \in \mathcal{C}} \mathbb{E}_{\mathbf{y} \sim \mathcal{P}}[F(\mathbf{x} ; \mathbf{y})], 
     \label{eq:stochastic}
     \end{equation}
 
-    where $\Omega \in \mathbb{R}^d$ is a closed convex set \cite{sahu19a}, \cite{lobanov2023};
+    where $\mathcal{C} \in \mathbb{R}^d$ is a closed convex set \cite{sahu19a}, \cite{lobanov2023};
     
     \item \textit{Finite-sum} 
     
-    $\min _{\mathbf{x} \in \Omega} F(\mathbf{x})=\dfrac{1}{n} \sum_{i=1}^n f_i(\mathbf{x})$, 
-    
     \begin{equation}
-        \min _{\mathbf{x} \in \Omega} F(\mathbf{x})=\dfrac{1}{n} \sum_{i=1}^n f_i(\mathbf{x}),
+        \min _{\mathbf{x} \in \mathcal{C}a} F(\mathbf{x})= \min _{\mathbf{x} \in \mathcal{C}}\dfrac{1}{n} \sum_{i=1}^n f_i(\mathbf{x}),
         \label{eq:finite-sum}
     \end{equation}
 
-    where $\Omega \subset \mathbb{R}^d$ denotes a closed convex feasible set \cite{gao20b}.
+    where $\mathcal{C} \subset \mathbb{R}^d$ denotes a closed convex feasible set \cite{gao20b}.
 \end{enumerate}
 
 One of the potential solutions to the problems Eq.~\eqref{eq:stochastic}, \eqref{eq:finite-sum} 
@@ -167,15 +164,15 @@ $\mathbf{d}_0=\mathbf{0}$ and $\rho_t$ is a time-decaying sequence.
  
 
 
-The most inportant properties of the algorithm:
+Key characteristics of the algorithm are highlighted as follows:
 
 \begin{itemize}[left=0pt,labelindent=0pt]
     \item A straightforward substitution of $\nabla f(\mathbf{x}_k)$ with 
     its stochastic counterpart, $\nabla F(\mathbf{x}_k ; \mathbf{y}_k)$, 
     carries the potential for divergence, primarily owing to the persistent 
-    variance within gradient approximations.
+    variance within gradient approximations;
     
-    \item The algorithm explores three distinct gradient approximation strategies.
+    \item The algorithm explores three distinct gradient approximation strategies:
     
     \begin{enumerate}[left=0pt,labelindent=0pt]
         \item \textit{KWSA}
@@ -199,7 +196,7 @@ The most inportant properties of the algorithm:
         Sample $\left\{\mathbf{z}_{i, t}\right\}_{i=1}^m \sim \mathcal{N}\left(0, \mathbf{I}_d\right)$,
         \small{
         $$
-        \mathbf{g}\left(\mathbf{x}_t ; \mathbf{y}, \mathbf{z}_t\right)=\frac{1}{m} \sum_{i=1}^m \frac{F\left(\mathbf{x}_t+c_t \mathbf{z}_{i, t} ; \mathbf{y}\right)-F\left(\mathbf{x}_t ; \mathbf{y}\right)}{c_t} \mathbf{z}_{i, t}
+        \mathbf{g}\left(\mathbf{x}_t ; \mathbf{y}, \mathbf{z}_t\right)=\frac{1}{m} \sum_{i=1}^m \frac{F\left(\mathbf{x}_t+c_t \mathbf{z}_{i, t} ; \mathbf{y}\right)-F\left(\mathbf{x}_t ; \mathbf{y}\right)}{c_t} \mathbf{z}_{i, t};
         $$
         }
     \end{enumerate}
@@ -227,6 +224,110 @@ Hence, the rate of convergence of the proposed algorithm in terms of the
 primal gap is showed to match its first order counterpart in terms
 of iterations.
 
+\section{FZCGS Algorithm}
+
+\textit{Faster Zeroth-Order Conditional Gradient Sliding (ZOCGS)} method introduces 
+a sliding technique that accelerates convergence by dynamically adjusting 
+the step size and direction based on function evaluations. 
+\textit{FZOCGS} is capable of handling high-dimensional problems, non-convex functions, 
+and noisy objective evaluations, making it suitable for a wide range of applications.
+
+In the article, \textit{ZOCGS} addresses the problem represented by 
+eq. \eqref{eq:finite-sum}.
+
+
+\subsection{FZFW Algorithm}
+
+\textit{Faster Zeroth-Order Frank-Wolfe (FZFW)} method predates \textit{FZCGS} and does not 
+incorporate the conditional gradient sliding algorithm.
+
+The update scheme of \textit{FZCGS} consists of the following steps:
+
+\begin{equation}
+    \mathbf{u}_k=\arg \max _{\mathbf{u} \in \Omega}\left\langle\mathbf{u},-\hat{\mathbf{v}}_k\right\rangle 
+\label{eq:gao-u-update}
+\end{equation}
+    
+\begin{equation}
+    \mathbf{d}_k=\mathbf{u}_k-\mathbf{x}_k
+\label{eq:gao-d-update}
+\end{equation}
+
+\begin{equation}
+    \mathbf{x}_{k+1}=\mathbf{x}_k+\gamma_k \mathbf{d}_k,
+\label{eq:gao-x-update}
+\end{equation}
+
+where $\hat{\mathbf{v}}_k$ is a gradient approximation.
+
+Key highlights of this algorithm encompass the following:
+
+\begin{itemize}[left=0pt,labelindent=0pt]
+    
+\item The usage of the coordinate-wise gradient estimator (eq. \eqref{eq:coorwise-estim});
+
+\item The gradient estimation occurs at every $q$ iterations are defined as follows:
+
+\small{
+\begin{equation}
+    \hat{\nabla} f_{S_1}\left(\mathbf{x}_k\right)=\sum_{j=1}^d \frac{f_{S_1}\left(\mathbf{x}_k+\mu_j \mathbf{e}_j\right)-f_{S_1}\left(\mathbf{x}_k-\mu_j \mathbf{e}_j\right)}{2 \mu_j} \mathbf{e}_j,
+\label{eq:estim-grad-q}
+\end{equation}
+}
+
+and at other iterations as follows:
+
+\small{
+\begin{equation}
+    \hat{\mathbf{v}}_k=\frac{1}{\left|S_2\right|} \sum_{i \in S_2}\left[\hat{\nabla} f_i\left(\mathbf{x}_k\right)-\hat{\nabla} f_i\left(\mathbf{x}_{k-1}\right)+\hat{\mathbf{v}}_{k-1}\right],
+\label{eq:estim-grad-not-q}
+\end{equation}
+}
+
+where $S_1$ and $S_2$ denote the randomly selected samples;
+    
+\item The estimated number of oracle queries is $O\left(\dfrac{n^{1/2}d}{\epsilon^2}\right)$.
+\end{itemize}
+
+
+\subsection{FZCGS Algorithm}
+
+Although \textit{Faster Zeroth-Order Frank-Wolfe (FZFW)} employs the 
+same technique for gradient approximation, it upgrades $\mathbf{x}_{k}$
+in a different way via \textit{the conditional gradient sliding algorithm}:
+
+\begin{itemize}[left=0pt,labelindent=0pt]
+
+\item Defining $\phi(\mathbf{y} ; \mathbf{x}, \nabla F(\mathbf{x}), \gamma)=\min _{\mathbf{y} \in \Omega}\langle\nabla F(\mathbf{x}), \mathbf{y}\rangle+$ $\frac{1}{2 \gamma}\|\mathbf{y}-\mathbf{x}\|^2$;
+
+\item Optimizing $\max _{\mathbf{x} \in \Omega}\left\langle\phi^{\prime}\left(\mathbf{u}_t ; \mathbf{u}, \mathbf{g}, \gamma\right), \mathbf{u}_t-\mathbf{x}\right\rangle$,
+ which is the Wolfe gap;
+ 
+\item Terminating when the Wolfe gap is smaller than the predefined tolerance $\eta$.
+
+\end{itemize}
+
+\subsection{FZCGS: Convergence Analysis}
+
+Firstly, the utilization of the coordinate-wise gradient estimator significantly 
+augments convergence performance in comparison to alternative gradient estimators. 
+This estimator also reduces the variance introduced by the randomly selected component 
+functions.
+
+Furthermore, it's worth emphasizing that the incorporation of 
+\textit{conditional gradient sliding} has yielded a substantial 
+reduction in the algorithm's iteration complexity, transitioning from 
+$O\left(\dfrac{n^{1/2}d}{\epsilon^2}\right)$
+to $O\left(\dfrac{n^{1/2}d}{\epsilon}\right)$.
+
+In conclusion, it has been substantiated, through theoretical analysis, 
+that \textit{FZCGS} demonstrates superior convergence rates when 
+compared to previously developed methods designed for non-convex optimization. 
+Remarkably, its iteration complexity even outperforms that of its first-order counterparts.
+
+\section{ZO-SCGS Algorithm}
+
+\subsection{ZO-SCGS: Convergence Analysis}
  
 \medskip
 \printbibliography % Print bibliography
